@@ -1,0 +1,49 @@
+name: Android Release Build
+
+on:
+  push:
+    tags:
+      - 'v*'
+  # 👇 이 한 줄을 추가하면 깃허브 웹페이지에 '수동 실행' 버튼이 생깁니다!
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 코드 가져오기
+        uses: actions/checkout@v4
+
+      - name: 자바(JDK) 17 세팅
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: local.properties(비밀금고) 생성
+        run: |
+          echo "DATA_GSM_API_KEY=\"${{ secrets.API_KEY }}\"" > local.properties
+          echo "BOT_API_URL=\"${{ secrets.BOT_API_URL }}\"" >> local.properties
+
+      - name: 빌드 권한 부여
+        run: chmod +x gradlew
+
+      - name: APK 조립(Build)하기
+        run: ./gradlew assembleRelease
+
+      - name: 임시 서명 키 생성 및 APK 자동 서명
+        run: |
+          keytool -genkey -v -keystore auto-release.keystore -alias release -keyalg RSA -keysize 2048 -validity 10000 -storepass "gsmwatch" -keypass "gsmwatch" -dname "CN=GSM, OU=Watch, O=GSM, L=Gwangju, S=Gwangju, C=KR"
+          BUILD_TOOLS_DIR=$(ls -d $ANDROID_HOME/build-tools/* | tail -1)
+          $BUILD_TOOLS_DIR/apksigner sign --ks auto-release.keystore --ks-pass pass:"gsmwatch" --out app/build/outputs/apk/release/GSMwatch_${{ github.ref_name }}.apk app/build/outputs/apk/release/app-release-unsigned.apk
+
+      - name: 깃허브 Release 배포하기
+        uses: softprops/action-gh-release@v2
+        with:
+          files: app/build/outputs/apk/release/GSMwatch_${{ github.ref_name }}.apk
+          generate_release_notes: true
