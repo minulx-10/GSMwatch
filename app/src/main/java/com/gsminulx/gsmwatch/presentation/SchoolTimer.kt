@@ -151,6 +151,16 @@ class SchoolTimer(val grade: Int = 1, val classNum: Int = 1, val sharedPref: Sha
 
     fun getTodaySchedule(): List<Period> = weeklyTimetable[LocalDate.now().dayOfWeek] ?: baseSchedule
 
+    fun getVisibleScheduleForDay(day: DayOfWeek): List<Period> {
+        val schedule = weeklyTimetable[day] ?: baseSchedule
+        return schedule.filter { period ->
+            val isTarget = period.name.contains("교시")
+            val isHidden = period.name in listOf("0교시", "10교시", "11교시")
+            val isFridayHidden = day == DayOfWeek.FRIDAY && period.name in listOf("8교시", "9교시")
+            isTarget && !isHidden && !isFridayHidden
+        }
+    }
+
     fun getDayName(day: DayOfWeek) = when (day) {
         DayOfWeek.MONDAY -> "월요일"; DayOfWeek.TUESDAY -> "화요일"; DayOfWeek.WEDNESDAY -> "수요일"
         DayOfWeek.THURSDAY -> "목요일"; DayOfWeek.FRIDAY -> "금요일"; else -> "주말"

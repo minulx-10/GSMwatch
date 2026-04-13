@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "674156310684",
+    "project_id": "gsmwatch-19806",
+    "storage_bucket": "gsmwatch-19806.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:674156310684:android:570609804fccd5050a7d59",
+        "android_client_info": {
+          "package_name": "com.gsminulx.gsmwatch"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnhqYSXiI7yF3Ib8Dzeq2_dE0M5XEAuBg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

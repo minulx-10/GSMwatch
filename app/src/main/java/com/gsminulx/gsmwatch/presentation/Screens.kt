@@ -33,6 +33,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.text.SpanStyle
 import java.time.LocalDate
+import com.gsminulx.gsmwatch.analytics.AppAnalytics
 
 @Composable
 fun SettingsScreen(initialGrade: Int, initialClass: Int, onSave: (Int, Int) -> Unit) {
@@ -77,13 +78,18 @@ fun SettingsScreen(initialGrade: Int, initialClass: Int, onSave: (Int, Int) -> U
 @Composable
 fun WeeklyTimetableScreen(grade: Int, classNum: Int, onBack: () -> Unit) {
     val context = LocalContext.current
+    val analytics = remember(context) { AppAnalytics(context) }
     val sharedPref = remember { context.getSharedPreferences("GsmWatchPrefs", Context.MODE_PRIVATE) }
     val timer = remember { SchoolTimer(grade, classNum, sharedPref) }
     val coroutineScope = rememberCoroutineScope()
 
     var editingPeriod by remember { mutableStateOf<Pair<DayOfWeek, Period>?>(null) }
 
-    LaunchedEffect(timer) { timer.fetchRealData() }
+    LaunchedEffect(timer) {
+        timer.fetchRealData()
+        val visiblePeriodCount = timer.getVisibleScheduleForDay(LocalDate.now().dayOfWeek).count { it.subject.isNotEmpty() }
+        analytics.trackTimetableLoaded(grade, classNum, visiblePeriodCount)
+    }
     val pagerState = rememberPagerState(pageCount = { timer.weekdays.size })
 
     if (editingPeriod != null) {
@@ -133,10 +139,15 @@ fun WeeklyTimetableScreen(grade: Int, classNum: Int, onBack: () -> Unit) {
 fun WeeklyMealsScreen(onBack: () -> Unit) {
     // [수정] SharedPreferences 추가 및 SchoolTimer 인스턴스화 수정
     val context = LocalContext.current
+    val analytics = remember(context) { AppAnalytics(context) }
     val sharedPref = remember { context.getSharedPreferences("GsmWatchPrefs", Context.MODE_PRIVATE) }
     val timer = remember { SchoolTimer(sharedPref = sharedPref) }
 
-    LaunchedEffect(timer) { timer.fetchRealData() }
+    LaunchedEffect(timer) {
+        timer.fetchRealData()
+        val mealCount = timer.weeklyMeals.values.sumOf { meals -> meals.size }
+        analytics.trackMealsLoaded(mealCount)
+    }
     val pagerState = rememberPagerState(pageCount = { timer.weekdays.size })
 
     Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
@@ -236,6 +247,8 @@ fun EditTimetableScreen(
     onSaved: () -> Unit,
     onCancel: () -> Unit
 ) {
+    val context = LocalContext.current
+    val analytics = remember(context) { AppAnalytics(context) }
     val pNum = period.name.replace("교시", "").toIntOrNull() ?: 0
     var customSubject by remember { mutableStateOf(timer.sharedPref.getString("custom_${day.name}_$pNum", "") ?: "") }
 
@@ -276,6 +289,7 @@ fun EditTimetableScreen(
                     onClick = {
                         if (customSubject.isNotBlank()) timer.saveCustomSubject(day, pNum, customSubject)
                         else timer.clearCustomSubject(day, pNum)
+                        analytics.trackTimetableSubjectEdited(day.name.lowercase(), pNum, customSubject.isNotBlank())
                         onSaved()
                     },
                     modifier = Modifier.fillMaxWidth(0.8f).padding(top = 15.dp)
@@ -300,6 +314,7 @@ fun EditTimetableScreen(
 @Composable
 fun DDayTasksScreen(onBack: () -> Unit) {
     val context = LocalContext.current
+    val analytics = remember(context) { AppAnalytics(context) }
     val sharedPref = remember { context.getSharedPreferences("GsmWatchPrefs", Context.MODE_PRIVATE) }
     
     // [수정] 기본값(1학년 1반)이 아닌 저장된 사용자 설정을 불러옵니다!
@@ -310,6 +325,7 @@ fun DDayTasksScreen(onBack: () -> Unit) {
 
     LaunchedEffect(timer) {
         timer.fetchRealData()
+        analytics.trackDdayLoaded(timer.ddayTasks.size)
     }
 
     Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
