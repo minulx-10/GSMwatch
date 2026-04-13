@@ -4,6 +4,7 @@ import java.io.FileInputStream
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.gms.google-services")
 }
 
 val localProperties = Properties()
@@ -23,8 +24,8 @@ android {
         minSdk = 30
         targetSdk = 36
 
-        versionCode = 11
-        versionName = "0.6.1"
+        versionCode = 12
+        versionName = "0.6.2"
 
         // 👉 [수정] 혹시 모를 따옴표(")를 강제로 모두 지워버린 후 감싸기!
         val dataGsmApiKey = (localProperties.getProperty("DATA_GSM_API_KEY") ?: "").replace("\"", "")
@@ -76,22 +77,20 @@ dependencies {
     implementation(libs.wear.tooling.preview)
     implementation(libs.activity.compose)
     implementation(libs.core.splashscreen)
+
+    implementation(platform("com.google.firebase:firebase-bom:34.12.0"))
+    implementation("com.google.firebase:firebase-analytics")
+
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.ui.test.junit4)
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
-    // [개선 1, 2] 네트워크 및 JSON 파싱 (Retrofit + Gson)
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-
-    // [개선 5] ViewModel 및 Lifecycle (MVVM 패턴)
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
-
-    // [개선 8] SharedPreferences 대체용 DataStore
     implementation("androidx.datastore:datastore-preferences:1.0.0")
-
-    // [개선 11] Wear OS Ambient Mode (AOD) 지원
     implementation("androidx.wear.compose:compose-foundation:1.2.1")
     implementation("androidx.wear.compose:compose-navigation:1.2.1")
 }
+

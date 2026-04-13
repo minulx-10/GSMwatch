@@ -12,19 +12,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.itemsIndexed
-
-// 👉 [수정됨] 에러의 주범이었던 material3 임포트!
-import androidx.wear.compose.material3.* import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.repeatOnLifecycle
-// 👉 [수정됨] Deprecated 경고를 없애는 최신 LifecycleOwner 임포트
-import androidx.lifecycle.compose.LocalLifecycleOwner
-
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
+import androidx.wear.compose.material3.*
 
 @Composable
 fun TimerScreen(grade: Int, classNum: Int, onTimetableClick: () -> Unit, onMealsClick: () -> Unit, onTasksClick: () -> Unit, onSettingsClick: () -> Unit) {
@@ -78,11 +75,8 @@ fun TimerScreen(grade: Int, classNum: Int, onTimetableClick: () -> Unit, onMeals
 
             if (!timer.isWeekend()) {
                 val today = LocalDate.now().dayOfWeek
-                val displaySchedule = timer.getTodaySchedule().filter { period ->
-                    val isTarget = period.name.contains("교시") && period.subject.isNotEmpty()
-                    val isHidden = period.name in listOf("0교시", "10교시", "11교시")
-                    val isFridayHidden = today == DayOfWeek.FRIDAY && period.name in listOf("8교시", "9교시")
-                    isTarget && !isHidden && !isFridayHidden
+                val displaySchedule = timer.getVisibleScheduleForDay(today).filter { period ->
+                    period.subject.isNotEmpty()
                 }
                 item { ScheduleCard(displaySchedule) }
                 item { 
