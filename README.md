@@ -3,9 +3,9 @@
 </h1>
 
 <p align="center">
-  <a href="[https://github.com/minulx-10/gsmwatch/blob/main/LICENSE](https://github.com/minulx-10/gsmwatch/blob/main/LICENSE)"><img loading="lazy" src="[https://img.shields.io/github/license/minulx-10/gsmwatch?style=for-the-badge&logo=github](https://img.shields.io/github/license/minulx-10/gsmwatch?style=for-the-badge&logo=github)"/></a>
-  <a href="[https://github.com/minulx-10/gsmwatch/releases](https://github.com/minulx-10/gsmwatch/releases)"><img loading="lazy" src="[https://img.shields.io/github/v/release/minulx-10/gsmwatch?include_prereleases&style=for-the-badge](https://img.shields.io/github/v/release/minulx-10/gsmwatch?include_prereleases&style=for-the-badge)"/></a>
-  <a href="[https://www.android.com/wear-os/](https://www.android.com/wear-os/)"><img loading="lazy" src="[https://img.shields.io/badge/Platform-Wear%20OS-4285F4?style=for-the-badge&logo=android&logoColor=white](https://img.shields.io/badge/Platform-Wear%20OS-4285F4?style=for-the-badge&logo=android&logoColor=white)"/></a>
+  <a href="https://github.com/minulx-10/GSMwatch/blob/master/LICENSE"><img loading="lazy" src="https://img.shields.io/github/license/minulx-10/GSMwatch?style=for-the-badge&logo=github" alt="License badge"/></a>
+  <a href="https://github.com/minulx-10/GSMwatch/releases"><img loading="lazy" src="https://img.shields.io/github/v/release/minulx-10/GSMwatch?include_prereleases&style=for-the-badge" alt="Release badge"/></a>
+  <a href="https://www.android.com/wear-os/"><img loading="lazy" src="https://img.shields.io/badge/Platform-Wear%20OS-4285F4?style=for-the-badge&logo=android&logoColor=white" alt="Wear OS badge"/></a>
 </p>
 
 <p align="center">광주소프트웨어마이스터고등학교 학생들을 위해 개발된 Wear OS 애플리케이션입니다.</p>
